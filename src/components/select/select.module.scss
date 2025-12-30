@@ -1,0 +1,19 @@
+.select-trigger {
+  height: 40px !important;
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border-light-theme-border-1);
+  border-radius: 8px;
+  outline: none;
+  box-shadow: none;
+  padding: 0 16px;
+
+  &:hover {
+    border-color: var(--primary-primary);
+  }
+
+  span {
+    font-size: 14px;
+    color: var(--typography-light-theme-body);
+  }
+}
