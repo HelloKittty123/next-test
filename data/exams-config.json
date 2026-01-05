@@ -1,0 +1,22 @@
+[
+  {
+    "id": "1767516367962",
+    "title": "Bộ đề 1.1",
+    "numExams": 12,
+    "numQuestions": 5,
+    "duration": "90",
+    "excelFile": "Bộ_đề_1.1_12_DE_5_CAU_HOI_1767516946603.xlsx",
+    "createdAt": "2026-01-04T08:46:07.962Z",
+    "updatedAt": "2026-01-04T08:55:46.608Z"
+  },
+  {
+    "id": "1767517011471",
+    "title": "Bộ đề 2.1",
+    "numExams": 12,
+    "numQuestions": 5,
+    "duration": "90",
+    "excelFile": "Bộ_đề_2.1_12_DE_5_CAU_HOI_1767517030393.xlsx",
+    "createdAt": "2026-01-04T08:56:51.471Z",
+    "updatedAt": "2026-01-04T08:57:10.397Z"
+  }
+]

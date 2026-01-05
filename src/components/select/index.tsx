@@ -22,7 +22,7 @@ interface ISelectProps<T> {
     style?: React.CSSProperties;
   };
 }
-export const SelectRadix = <T extends object>({
+export const SelectRadix = <T,>({
   label,
   error,
   placeholder,
@@ -47,10 +47,14 @@ export const SelectRadix = <T extends object>({
         <Select.Content>
           {items.map((item, index) => (
             <Select.Item
-              key={(item?.[bindLabel as keyof T] || index) as React.Key}
-              value={item?.[bindValue as keyof T] as string}
+              key={(typeof item === "object" ? item?.[bindValue as keyof T] || index : item) as React.Key}
+              value={(typeof item === "object" ? item?.[bindValue as keyof T] : item) as string}
             >
-              {renderItems ? renderItems(item) : <span>{item?.[bindLabel as keyof T] as React.ReactNode}</span>}
+              {renderItems ? (
+                renderItems(item)
+              ) : (
+                <span>{(typeof item === "object" ? item?.[bindLabel as keyof T] : item) as React.ReactNode}</span>
+              )}
             </Select.Item>
           ))}
         </Select.Content>

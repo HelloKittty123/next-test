@@ -33,10 +33,14 @@ function Navbar() {
               alt=""
             />
           </DropdownMenu.Trigger>
-          <DropdownMenu.Content className="w-[276px]" align="end">
+          <DropdownMenu.Content
+            className="w-[276px] overflow-hidden"
+            style={{ borderRadius: "12px", boxShadow: "0 0 12px #21252b1f" }}
+            align="end"
+          >
             <DropdownMenu.Label>
               <div className="h-[123px] bg-[var(--primary-primary-background)]"></div>
-              <div className="relative flex flex-col items-center gap-[5px] pb-3">
+              <div className="relative flex flex-col items-center gap-[5px] pb-3 pt-[50px]">
                 <div className="w-[104px] h-[104px] bg-white rounded-full flex items-center justify-center absolute top-[-52px] left-2/4 -translate-x-2/4">
                   <Image
                     className="rounded-full object-cover cursor-pointer"
@@ -74,12 +78,12 @@ function Navbar() {
               </div>
             </DropdownMenu.Label>
             <DropdownMenu.Group>
-              <DropdownMenu.Item>
+              <DropdownMenu.Item className="!border-none !outline-none">
                 <div
                   className="px-5 py-[11px] cursor-pointer hover:bg-[var(--border-light-theme-border-2)] w-full flex items-center justify-between border-t border-t-[var(--border-light-theme-border-2)]"
                   onClick={logout}
                 >
-                  <span className="font-sm leading-7 text-[var(--typography-light-theme-body)]"> Đăng xuất</span>
+                  <span className="text-sm font-normal leading-7 text-[var(--typography-light-theme-body)]">Đăng xuất</span>
                   <Image width={24} height={24} src="/button/logout.svg" alt="" />
                 </div>
               </DropdownMenu.Item>

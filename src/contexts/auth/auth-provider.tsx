@@ -1,10 +1,12 @@
 "use client";
 
 import { Account } from "@models";
+import { decodeBase64URL, fetchData } from "@utils";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { AuthContext } from "./auth-context";
-import { fetchData } from "@utils";
+import { getAccountAD, logoutAD } from "@services";
 
 interface IAuthProviderProps {
   children: React.ReactNode;
@@ -26,7 +28,7 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
     try {
       const accesToken = localStorage.getItem("acess_token") || sessionStorage.getItem("access_token");
       if (accesToken) {
-        const decode = atob(accesToken);
+        const decode = decodeBase64URL(accesToken);
 
         const account: Account = JSON.parse(decode);
         if (["email", "name", "type"].every((k) => account.hasOwnProperty(k))) {
@@ -46,17 +48,10 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
 
   const getAccount = async () => {
     try {
-      const response = await fetchData<{
-        verified: boolean;
-        message: string;
-        data: { email: string; name: string; type: "a" | "u" };
-      }>({
-        api: "/api/admin/auth",
-        method: "GET",
-      });
+      const response = await getAccountAD();
 
-      if (response?.verified) {
-        setAccount(response.data);
+      if (response) {
+        setAccount(response);
         setIsAuthenticated(true);
         setLoading(false);
         setIsAdmin(true);
@@ -72,12 +67,22 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
     setIsAuthenticated(false);
   };
 
-  const logout = () => {
-    localStorage.clear();
-    sessionStorage.clear();
-    setAccount(undefined);
-    setIsAuthenticated(false);
-    router.replace("/login");
+  const logout = async () => {
+    try {
+      if (isAdmin) {
+        await logoutAD();
+
+        setIsAdmin(false);
+      }
+      localStorage.clear();
+      sessionStorage.clear();
+      setAccount(undefined);
+      setIsAuthenticated(false);
+
+      router.replace("/login");
+    } catch (error) {
+      toast("Đăng xuất thất bại, vui lòng thử lại sau!", { type: "error" });
+    }
   };
 
   return (

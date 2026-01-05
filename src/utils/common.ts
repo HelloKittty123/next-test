@@ -19,3 +19,18 @@ export function findInputError(errors: any, name: string) {
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+export const encodeBase64URL = (str: string) => {
+  return Buffer.from(str)
+    .toString("base64")
+    .replace(/=/g, "") // Xóa dấu = (Padding)
+    .replace(/\+/g, "-") // Thay + bằng -
+    .replace(/\//g, "_"); // Thay / bằng _
+};
+
+export const decodeBase64URL = (base64url: string) => {
+  // Thêm lại dấu = nếu cần thiết để Buffer hiểu
+  let base64 = base64url.replace(/-/g, "+").replace(/_/g, "/");
+  while (base64.length % 4) base64 += "=";
+  return Buffer.from(base64, "base64").toString("utf8");
+};

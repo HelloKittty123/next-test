@@ -26,10 +26,6 @@ export const fetchData = <T>({
     }
 
     if (requestContentType === "formData") {
-      headers = {
-        ...headers,
-        "Content-Type": "multipart/form-data",
-      };
     } else if (requestContentType === "text") {
       headers = {
         ...headers,
@@ -57,7 +53,7 @@ export const fetchData = <T>({
         if (method === "POST") {
           response = await fetch(api, {
             method,
-            body: JSON.stringify(payload),
+            body: requestContentType === "formData" ? payload : JSON.stringify(payload),
             headers,
           });
         } else if (method === "GET") {

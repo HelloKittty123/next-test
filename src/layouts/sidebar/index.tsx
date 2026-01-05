@@ -1,12 +1,12 @@
 "use client";
 
+import { Tooltip } from "@radix-ui/themes";
+import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { LeftSide, MenuItem, RightSide } from "./sidebar.constant";
-import clsx from "clsx";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@radix-ui/react-tooltip";
 
 
 function Sidebar() {
@@ -61,8 +61,7 @@ function Sidebar() {
       <div className="left_side w-[69px] py-4 flex flex-col items-center gap-2 border-r border-r-[var(--border-light-theme-border-2)]">
         <div className="flex flex-1 min-h-0 flex-col gap-2">
           {LeftSide.map((ls) => (
-            <Tooltip key={ls.id}>
-              <TooltipTrigger asChild>
+            <Tooltip key={ls.id} content={ls.title}>
                 <Link
                   href={ls.path}
                   className={clsx(
@@ -77,8 +76,6 @@ function Sidebar() {
                     alt=""
                   />
                 </Link>
-              </TooltipTrigger>
-              <TooltipContent>{ ls.title }</TooltipContent>
             </Tooltip>
           ))}
         </div>

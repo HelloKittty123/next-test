@@ -9,4 +9,6 @@ export { default as TextCustom } from "./text-custom";
 export { default as CheckboxRadix } from "./checkbox";
 export * from "./select";
 export * from './error-message';
-
+export * from "./table";
+export * from "./card";
+export * from "./badge";

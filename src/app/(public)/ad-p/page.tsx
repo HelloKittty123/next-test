@@ -4,16 +4,12 @@ import { Button, Input, TextCustom } from "@components";
 import { REGEX_EMAIL } from "@constants";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useAuth } from "@hooks";
-import { fetchData } from "@utils";
+import { loginAD } from "@services";
+import { IADFormLogin } from "@types";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { object, string } from "yup";
-
-export interface IADFormLogin {
-  email: string;
-  password: string;
-}
 
 const schema = object({
   email: string().required("Đây là trường bắt buộc").matches(new RegExp(REGEX_EMAIL), "Email không hợp lệ"),
@@ -36,18 +32,21 @@ function LoginADPage() {
 
   const onSubmit = async (formData: IADFormLogin) => {
     try {
-      const response = await fetchData<{ message: string; verified: boolean }>({
-        api: "/api/admin/auth",
-        method: "POST",
-        payload: { ...formData, name: "admin", type: "a" },
-      });
+      const response = await loginAD({ ...formData, name: "admin", type: "a" });
+
       if (response && response.verified) {
-        toast("Đăng nhập thành công!", { type: "success", delay: 3000 });
+        toast("Đăng nhập thành công!", { type: "success", position: "top-right" });
         setLoading(true);
         router.replace("/");
       }
     } catch (error) {
-      toast("Dăng nhập thất bại. Vui lòng kiểm tra lại email và mật khẩu.", { type: "error", delay: 3000 });
+      toast("Đăng nhập thất bại. Vui lòng kiểm tra lại email và mật khẩu.", {
+        type: "error",
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+      });
     }
   };
 

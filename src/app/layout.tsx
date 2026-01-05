@@ -1,10 +1,11 @@
+import { AuthProvider } from "@contexts";
+import { Theme } from "@radix-ui/themes";
 import type { Metadata } from "next";
+import { NextIntlClientProvider } from "next-intl";
+import { Tooltip } from "radix-ui";
+import { Bounce, ToastContainer } from "react-toastify";
 import { inter } from "./font";
 import "./globals.css";
-import { NextIntlClientProvider } from "next-intl";
-import { AuthProvider } from "@contexts";
-import { Tooltip } from "radix-ui";
-import { Theme } from "@radix-ui/themes";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -23,6 +24,19 @@ export default async function RootLayout({
           <NextIntlClientProvider>
             <Tooltip.Provider>
               <AuthProvider>{children}</AuthProvider>
+              <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick={false}
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+                transition={Bounce}
+              />
             </Tooltip.Provider>
           </NextIntlClientProvider>
         </Theme>

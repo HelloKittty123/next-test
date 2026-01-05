@@ -5,7 +5,7 @@ import { REGEX_EMAIL } from "@constants";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useAuth } from "@hooks";
 import { Skeleton } from "@radix-ui/themes";
-import { fetchData } from "@utils";
+import { encodeBase64URL, fetchData } from "@utils";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -56,7 +56,7 @@ function LoginPage() {
   }, []);
 
   const onSubmit = (formData: IFormLogin) => {
-    const accessToken = btoa(JSON.stringify({ ...formData, type: "u" }));
+    const accessToken = encodeBase64URL(JSON.stringify({ ...formData, type: "u" }));
     if (formData.rememberMe) {
       localStorage.setItem("acess_token", accessToken);
     } else {
