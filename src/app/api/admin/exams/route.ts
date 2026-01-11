@@ -4,6 +4,7 @@ import fsPromise from "fs/promises";
 import fs from "fs";
 import { existsSync } from "fs";
 import * as XLSX from "xlsx";
+import { ExamStatus } from "@types";
 
 const CONFIG_PATH = path.join(process.cwd(), "data", "exams-config.json");
 const EXAM_DIR = path.join(process.cwd(), "data", "exams");
@@ -41,7 +42,7 @@ export async function GET() {
 // TẠO MỚI VÀ CẬP NHAT BỘ ĐỀ
 export async function POST(req: NextRequest) {
   try {
-    const { id, title, numExams, numQuestions, duration = 60 } = await req.json();
+    const { id, title, numExams, numQuestions, status, duration = 60 } = await req.json();
 
     if (!title || !numExams || !numQuestions || !duration) {
       return NextResponse.json({ error: "Thiếu thông tin bắt buộc" }, { status: 400 });
@@ -99,6 +100,7 @@ export async function POST(req: NextRequest) {
       numExams,
       numQuestions,
       duration,
+      status: status || ExamStatus.INACTIVE,
       excelFile: excelName,
       createdAt: existingIndex !== -1 ? configs[existingIndex].createdAt : new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -118,5 +120,51 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(newConfig);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+// CẬP NHẬT TRẠNG THÁI BỘ ĐỀ
+export async function PUT(req: NextRequest) {
+  try {
+    const { id, status } = await req.json();
+
+    // Kiểm tra dữ liệu đầu vào
+    if (!id || status === undefined) {
+      return NextResponse.json(
+        { error: "Thiếu ID bộ đề hoặc trạng thái mới" },
+        { status: 400 }
+      );
+    }
+
+    const configs = await readConfig();
+    const existingIndex = configs.findIndex((c: any) => c.id === id);
+
+    if (existingIndex === -1) {
+      return NextResponse.json(
+        { error: "Không tìm thấy bộ đề để cập nhật" },
+        { status: 404 }
+      );
+    }
+
+    // Cập nhật trạng thái và thời gian chỉnh sửa
+    configs[existingIndex] = {
+      ...configs[existingIndex],
+      status: status,
+      updatedAt: new Date().toISOString(),
+    };
+
+    // Lưu lại vào file JSON
+    await fsPromise.writeFile(CONFIG_PATH, JSON.stringify(configs, null, 2));
+
+    return NextResponse.json({
+      success: true,
+      message: "Cập nhật trạng thái thành công",
+      data: configs[existingIndex],
+    });
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: "Lỗi hệ thống: " + error.message },
+      { status: 500 }
+    );
   }
 }

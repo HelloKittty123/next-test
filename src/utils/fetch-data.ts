@@ -55,7 +55,7 @@ export const fetchData = <T>({
         return new Promise<T | null>(async (resolve, reject) => {
             try {
                 let response;
-                if (method === "POST") {
+                if (method === "POST" || method === 'PUT') {
                     response = await fetch(api, {
                         method,
                         body:

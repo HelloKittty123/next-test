@@ -43,7 +43,7 @@ function Button({
             <button
                 className={clsx(
                     className,
-                    "px-2 flex items-center justify-center gap-2 hover:opacity-80 border-none outline-none rounded font-medium",
+                    "px-2 flex items-center justify-center gap-2! hover:opacity-80 border-none outline-none rounded font-medium",
                     size === "xs" && "h-7 text-xs",
                     size === "sm" && "h-8 text-sm",
                     size === "base" && "h-10 text-base",
