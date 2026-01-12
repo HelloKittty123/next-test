@@ -7,8 +7,8 @@
     "duration": 5,
     "excelFile": "Đề_kiểm_tra_giữa_kỳ_1_-_2025_2_DE_5_CAU_HOI_1768016887400.xlsx",
     "createdAt": "2026-01-10T03:48:07.444Z",
-    "updatedAt": "2026-01-10T03:48:07.445Z",
-    "status": "inactive"
+    "updatedAt": "2026-01-12T09:29:04.279Z",
+    "status": "active"
   },
   {
     "id": "1768017353453",
@@ -18,18 +18,7 @@
     "duration": 5,
     "excelFile": "Đề_kiểm_tra_cuối_kỳ_2025_2_DE_5_CAU_HOI_1768017353430.xlsx",
     "createdAt": "2026-01-10T03:55:53.453Z",
-    "updatedAt": "2026-01-10T03:55:53.454Z",
-    "status": "inactive"
-  },
-  {
-    "id": "1768017913589",
-    "title": "Đề kiểm tra giữa kỳ 2026",
-    "numExams": 2,
-    "numQuestions": 5,
-    "duration": 5,
-    "excelFile": "Đề_kiểm_tra_giữa_kỳ_2026_2_DE_5_CAU_HOI_1768017913568.xlsx",
-    "createdAt": "2026-01-10T04:05:13.589Z",
-    "updatedAt": "2026-01-10T04:05:13.589Z",
+    "updatedAt": "2026-01-12T09:29:38.415Z",
     "status": "active"
   },
   {
@@ -40,7 +29,7 @@
     "duration": 5,
     "excelFile": "Kiểm_tra_cuối_kỳ_2024_10_DE_5_CAU_HOI_1768130210930.xlsx",
     "createdAt": "2026-01-11T11:16:50.947Z",
-    "updatedAt": "2026-01-11T11:16:50.947Z",
+    "updatedAt": "2026-01-12T16:18:03.140Z",
     "status": "active"
   }
 ]

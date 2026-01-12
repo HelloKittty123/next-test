@@ -86,10 +86,10 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
   };
 
   return (
-    <AuthContext.Provider
+    <AuthContext
       value={{ account, setAccount, loading, setLoading, isAuthenticated, logout, setIsAuthenticated, isAdmin }}
     >
       {children}
-    </AuthContext.Provider>
+    </AuthContext>
   );
 };

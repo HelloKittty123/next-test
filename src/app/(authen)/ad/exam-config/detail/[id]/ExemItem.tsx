@@ -12,6 +12,9 @@ interface IExamItem {
 }
 
 function ExamItem({ exam, setSelectedExam, selectedExam }: IExamItem) {
+  console.log(exam);
+  
+
   return (
     <Card className="col-span-12 lg:col-span-4 max-h-full">
       <CardHeader className="pb-3">

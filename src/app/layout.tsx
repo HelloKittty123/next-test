@@ -6,6 +6,7 @@ import { Tooltip } from "radix-ui";
 import { Bounce, ToastContainer } from "react-toastify";
 import { inter } from "./font";
 import "./globals.css";
+import { LoadingProvider } from "../contexts/loading/LoadingProvider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -23,7 +24,9 @@ export default async function RootLayout({
         <Theme>
           <NextIntlClientProvider>
             <Tooltip.Provider>
-              <AuthProvider>{children}</AuthProvider>
+              <AuthProvider>
+                <LoadingProvider>{children}</LoadingProvider>
+              </AuthProvider>
               <ToastContainer
                 position="top-right"
                 autoClose={5000}

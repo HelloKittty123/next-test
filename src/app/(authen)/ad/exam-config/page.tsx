@@ -16,14 +16,16 @@ import {
   TableHeader,
   TableRow,
 } from "@components";
+import { useLoading } from "@hooks";
 import { Switch } from "@radix-ui/themes";
 import { deleteExamAPI, downloadExamAPI, getListExamAPI, updateExamStatusConfigAPI } from "@services";
 import { Exam, ExamStatus } from "@types";
-import { fetchData, formatDate } from "@utils";
+import { formatDate } from "@utils";
 import { Download, Edit, Eye, FileText, Plus, Search, Trash2 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import AlertDeleteDialog from "./AlertDeleteDialog";
 
 const status = [
   { label: "Tất cả", value: "all" },
@@ -35,6 +37,8 @@ export default function ExamSetList() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [exams, setExams] = useState<Exam[]>([]);
+
+  const { setLoading } = useLoading();
 
   const router = useRouter();
   const pathname = usePathname();
@@ -60,14 +64,18 @@ export default function ExamSetList() {
     return matchesSearch && matchesStatus;
   });
 
-  const updateStatusExamConfig = async (exam: Exam) => {
+  const updateStatusExamConfig = async (checked: boolean, exam: Exam) => {
     try {
-      const status = exam.status === ExamStatus.ACTIVE ? ExamStatus.INACTIVE : ExamStatus.ACTIVE;
+      setLoading(true);
+      const status = !checked ? ExamStatus.INACTIVE : ExamStatus.ACTIVE;
       await updateExamStatusConfigAPI({ id: exam.id, status });
+      setExams((prev) => prev.map((e) => (e.id === exam.id ? { ...exam, status } : e)));
       toast.success("Thay đổi trạng thái thành công");
     } catch (err) {
       toast.error("Thay đổi trạng thái thất bại");
     }
+
+    setLoading(false);
   };
 
   const downloadExam = async (exam: Exam) => {
@@ -91,14 +99,16 @@ export default function ExamSetList() {
 
   const deleteExam = async (exam: Exam) => {
     try {
+      setLoading(true);
       await deleteExamAPI(exam.id);
       toast.success("Xóa bộ đề thành công");
       setExams((prev) => prev.filter((p) => p.id !== exam.id));
     } catch (e) {
       console.log(e);
-
       toast.error("Xóa bộ đề thất bại");
     }
+
+    setLoading(false);
   };
 
   // const stats = {
@@ -220,7 +230,7 @@ export default function ExamSetList() {
                   <TableHead className="text-center sticky top-0">Thời gian</TableHead>
                   <TableHead className="sticky top-0">Ngày tạo</TableHead>
                   <TableHead className="text-center sticky top-0">Trạng thái</TableHead>
-                  <TableHead className="text-center sticky top-0">Thao tác</TableHead>
+                  <TableHead className="text-center sticky top-0">Hành động</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -243,7 +253,10 @@ export default function ExamSetList() {
                       <TableCell className="text-center">{exam.duration} phút</TableCell>
                       <TableCell>{formatDate(exam.createdAt, "DD/MM/YYYY HH:mm")}</TableCell>
                       <TableCell className="text-center">
-                        <Switch checked={exam.status === "active"} />
+                        <Switch
+                          checked={exam.status === "active"}
+                          onCheckedChange={(e) => updateStatusExamConfig(e, exam)}
+                        />
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center justify-end gap-2">
@@ -257,17 +270,10 @@ export default function ExamSetList() {
                           <Button variant="basic" tooltip="Tải xuống" onClick={() => downloadExam(exam)}>
                             <Download className="h-4 w-4" />
                           </Button>
-                          <Button variant="basic" tooltip="Chỉnh sửa">
+                          {/* <Button variant="basic" tooltip="Chỉnh sửa">
                             <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            onClick={() => deleteExam(exam)}
-                            variant="basic"
-                            tooltip="Xóa"
-                            className="text-red-600 hover:text-red-700"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+                          </Button> */}
+                          <AlertDeleteDialog exam={exam} deleteExam={deleteExam} />
                         </div>
                       </TableCell>
                     </TableRow>
