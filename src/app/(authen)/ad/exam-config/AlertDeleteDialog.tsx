@@ -15,7 +15,7 @@ function AlertDeleteDialog({ deleteExam, exam }: IAlertDeleteDialog) {
     <AlertDialog.Root>
       <AlertDialog.Trigger>
         <Button variant="basic" tooltip="Xóa" className="text-red-600 hover:text-red-700">
-          <Trash2 className="h-4 w-4" />
+          <Trash2 color="red" className="h-4 w-4" />
         </Button>
       </AlertDialog.Trigger>
       <AlertDialog.Content maxWidth="450px">

@@ -1,4 +1,4 @@
-import { Exam, ExamStatus, PayloadExamConfig } from "@types";
+import { Exam, ExamResult, ExamStatus, ExamTest, PayloadExamConfig } from "@types";
 import { fetchData } from "@utils";
 
 export const getListExamAPI = () => {
@@ -34,4 +34,12 @@ export const getExamByIdAPI = (id: string) => {
 
 export const updateExamStatusConfigAPI = (payload: { id: string; status: ExamStatus }) => {
   return fetchData({ api: `/api/admin/exams`, method: "PUT", payload });
+};
+
+export const getExamTestAPI = (id: string) => {
+  return fetchData<ExamTest>({ api: `/api/exams/${id}`, method: "GET" });
+};
+
+export const submitExamAPI = (payload: { examId: string; examCode: string; answers: { [key: string]: string } }) => {
+  return fetchData<ExamResult>({ api: "/api/exams/submit", method: "POST", payload });
 };

@@ -1,23 +1,17 @@
-'use client';
+"use client";
 
 import { Account } from "@models";
-import { createContext } from "react";
+import { createContext, Dispatch, SetStateAction } from "react";
 
-export const AuthContext = createContext<{
+export interface IAuthContext {
   account: Account | undefined | null;
-  setAccount: (acc: Account) => void;
+  setAccount: Dispatch<SetStateAction<Account | undefined>>;
   loading: boolean;
-  setLoading: (val: boolean) => void;
-  setIsAuthenticated: (val: boolean) => void;
+  setLoading: Dispatch<SetStateAction<boolean>>;
+  setIsAuthenticated: Dispatch<SetStateAction<boolean>>;
   isAuthenticated: boolean;
   isAdmin?: boolean;
-  logout: () => void;
-}>({
-  account: undefined,
-  setAccount: (acc) => {},
-  loading: true,
-  setLoading: (val) => {},
-  setIsAuthenticated: (val) => {},
-  isAuthenticated: false,
-  logout: () => {},
-});
+  logout: () => Promise<void>;
+}
+
+export const AuthContext = createContext<IAuthContext | undefined>(undefined);

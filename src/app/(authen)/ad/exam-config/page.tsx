@@ -21,7 +21,7 @@ import { Switch } from "@radix-ui/themes";
 import { deleteExamAPI, downloadExamAPI, getListExamAPI, updateExamStatusConfigAPI } from "@services";
 import { Exam, ExamStatus } from "@types";
 import { formatDate } from "@utils";
-import { Download, Edit, Eye, FileText, Plus, Search, Trash2 } from "lucide-react";
+import { Download, Edit, Eye, FileText, LinkIcon, Plus, Search, Trash2 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -109,6 +109,16 @@ export default function ExamSetList() {
     }
 
     setLoading(false);
+  };
+
+  const copyExam = async (exam: Exam) => {
+    try {
+      const url = `${window.location.protocol}//${window.location.host}/u/exam/${exam.id}`;
+      await navigator.clipboard.writeText(url);
+      toast.info("Đã sao chép đường dẫn vào bộ nhớ tạm");
+    } catch (err) {
+      toast.error("Sao chép đường dẫn thất bại");
+    }
   };
 
   // const stats = {
@@ -259,7 +269,7 @@ export default function ExamSetList() {
                         />
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center justify-end gap-2">
+                        <div className="flex items-center justify-center">
                           <Button
                             tooltip="Xem chi tiết"
                             variant="basic"
@@ -274,6 +284,15 @@ export default function ExamSetList() {
                             <Edit className="h-4 w-4" />
                           </Button> */}
                           <AlertDeleteDialog exam={exam} deleteExam={deleteExam} />
+
+                          <Button
+                            disabled={exam.status === ExamStatus.INACTIVE}
+                            variant="basic"
+                            tooltip="Sao chép đường dẫn bài thi"
+                            onClick={() => copyExam(exam)}
+                          >
+                            <LinkIcon className="h-4 w-4" />
+                          </Button>
                         </div>
                       </TableCell>
                     </TableRow>

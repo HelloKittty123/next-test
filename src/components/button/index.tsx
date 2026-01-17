@@ -32,7 +32,7 @@ function Button({
     fill,
     colorSpin,
     classChildrens,
-    disabled,
+    disabled = false,
     variant = "primary",
     tooltip,
     size = "base",
@@ -56,6 +56,7 @@ function Button({
                     disabled && "opacity-50"
                 )}
                 {...rest}
+                disabled={disabled}
                 style={{ cursor: disabled ? "not-allowed" : "pointer" }}
             >
                 {children}

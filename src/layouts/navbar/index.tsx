@@ -2,17 +2,29 @@
 
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
-import { useAuth } from "@hooks";
+import { useAuth, useLoading } from "@hooks";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { TextCustom } from "@components";
+import { toast } from "react-toastify";
 
 function Navbar() {
   const NEXT_PUBLIC_APP_TITLE = process.env.NEXT_PUBLIC_APP_TITLE;
 
   const { account, logout } = useAuth();
+  const { setLoading } = useLoading();
   const router = useRouter();
   const pathName = usePathname();
+
+  const logoutAction = async () => {
+    try {
+      setLoading(true);
+      await logout();
+    } catch (e) {
+      toast("Đăng xuất thất bại, vui lòng thử lại sau!", { type: "error" });
+    }
+    setLoading(false);
+  };
 
   return (
     <div
@@ -81,9 +93,11 @@ function Navbar() {
               <DropdownMenu.Item className="!border-none !outline-none">
                 <div
                   className="px-5 py-[11px] cursor-pointer hover:bg-[var(--border-light-theme-border-2)] w-full flex items-center justify-between border-t border-t-[var(--border-light-theme-border-2)]"
-                  onClick={logout}
+                  onClick={logoutAction}
                 >
-                  <span className="text-sm font-normal leading-7 text-[var(--typography-light-theme-body)]">Đăng xuất</span>
+                  <span className="text-sm font-normal leading-7 text-[var(--typography-light-theme-body)]">
+                    Đăng xuất
+                  </span>
                   <Image width={24} height={24} src="/button/logout.svg" alt="" />
                 </div>
               </DropdownMenu.Item>

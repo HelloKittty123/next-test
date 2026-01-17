@@ -16,16 +16,24 @@ function PrivateRoute({ children, role }: IPrivateRouteProps) {
   const router = useRouter();
   const pathName = usePathname();
 
+  console.log("pathname", pathName);
+
   useEffect(() => {
     if (!loading && !isAuthenticated) {
+      sessionStorage.setItem("prevUrl", pathName);
       router.push("/login");
     } else if (!loading && isAuthenticated && pathName === "/") {
       if (isAdmin) {
         router.replace("/ad");
         return;
       }
-      router.replace("/u");
-    } else if (role === "admin" && !loading && isAuthenticated && !isAdmin) {
+
+      const prevUrl = sessionStorage.getItem("prevUrl");
+      if (prevUrl) {
+        router.replace(prevUrl);
+        sessionStorage.removeItem("prevUrl");
+        return;
+      }
       router.replace("/u");
     }
   }, [loading, isAuthenticated, router, pathName, isAdmin, role]);
@@ -38,7 +46,7 @@ function PrivateRoute({ children, role }: IPrivateRouteProps) {
       <div className="w-screen h-screen flex flex-col">
         <Navbar />
         <div className="flex flex-1 min-h-0">
-          <Sidebar />
+          {isAdmin && <Sidebar />}
           <div className="flex-1 min-w-0 h-full">{children}</div>
         </div>
       </div>

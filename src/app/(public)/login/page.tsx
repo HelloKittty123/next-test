@@ -32,6 +32,7 @@ function LoginPage() {
   const NEXT_PUBLIC_APP_TITLE = process.env.NEXT_PUBLIC_APP_TITLE;
   const [cities, setCities] = useState<Array<{ label: string; value: string }>>([]);
   const [loadingCities, setLoadingCities] = useState<boolean>(true);
+  const [isSubmit, setIsSubmit] = useState<boolean>(false);
 
   const { handleSubmit, control, reset } = useForm({
     resolver: yupResolver(schema),
@@ -56,6 +57,7 @@ function LoginPage() {
   }, []);
 
   const onSubmit = (formData: IFormLogin) => {
+    setIsSubmit(true);
     const accessToken = encodeBase64URL(JSON.stringify({ ...formData, type: "u" }));
     if (formData.rememberMe) {
       localStorage.setItem("acess_token", accessToken);
@@ -65,7 +67,7 @@ function LoginPage() {
     toast("Đăng nhập thành công!", { type: "success", delay: 3000 });
 
     setLoading(true);
-    router.replace("/u");
+    router.replace("/");
   };
 
   const getCities = async () => {
@@ -180,7 +182,12 @@ function LoginPage() {
             <CheckboxRadix value={value} label={{ text: "Ghi nhớ phiên đăng nhập" }} onChange={onChange} />
           )}
         />
-        <Button onClick={handleSubmit(onSubmit)} className="h-12 rounded-lg w-full">
+        <Button
+          onClick={handleSubmit(onSubmit)}
+          disabled={isSubmit}
+          loading={isSubmit}
+          className="h-12 rounded-lg w-full"
+        >
           Đăng nhập
         </Button>
       </div>

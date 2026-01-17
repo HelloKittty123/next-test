@@ -7,6 +7,7 @@ import { useAuth } from "@hooks";
 import { loginAD } from "@services";
 import { IADFormLogin } from "@types";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { object, string } from "yup";
@@ -17,6 +18,8 @@ const schema = object({
 });
 
 function LoginADPage() {
+  const [isSubmit, setIsSubmit] = useState<boolean>(false);
+
   const { handleSubmit, control, reset } = useForm({
     resolver: yupResolver(schema),
     mode: "onBlur",
@@ -32,6 +35,7 @@ function LoginADPage() {
 
   const onSubmit = async (formData: IADFormLogin) => {
     try {
+      setIsSubmit(true);
       const response = await loginAD({ ...formData, name: "admin", type: "a" });
 
       if (response && response.verified) {
@@ -47,6 +51,7 @@ function LoginADPage() {
         hideProgressBar: false,
         closeOnClick: false,
       });
+      setIsSubmit(false);
     }
   };
 
@@ -92,7 +97,12 @@ function LoginADPage() {
           )}
         />
 
-        <Button onClick={handleSubmit(onSubmit)} className="h-12 rounded-lg w-full">
+        <Button
+          onClick={handleSubmit(onSubmit)}
+          loading={isSubmit}
+          disabled={isSubmit}
+          className="h-12 rounded-lg w-full"
+        >
           Đăng nhập
         </Button>
       </div>
