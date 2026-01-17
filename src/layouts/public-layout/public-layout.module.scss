@@ -1,3 +1,4 @@
 .public-layout-wrap {
-  @apply w-[100dvw] h-[100dvh] flex items-center justify-center overflow-auto bg-[var(--primary-primary-background)];
+    @apply w-[100dvw] h-[100dvh] flex justify-center overflow-auto bg-[var(--primary-primary-background)];
+    padding: 24px 0;
 }

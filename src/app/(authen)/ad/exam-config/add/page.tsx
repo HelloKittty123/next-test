@@ -9,6 +9,7 @@ import {
     CardHeader,
     CardTitle,
     Input,
+    Spinner,
     TextCustom,
 } from "@components";
 import { useEffect, useState } from "react";
@@ -29,6 +30,7 @@ export interface IExamSet {
     numExams: number;
     numQuestions: number;
     duration: number;
+    questionPast: number;
 }
 
 const schema = object({
@@ -42,10 +44,14 @@ const schema = object({
     duration: number()
         .min(5, "Trường này không thể nhỏ hơn 5")
         .required("Đây là trường bắt buộc"),
+    questionPast: number()
+        .min(1, "Trường này không thể nhỏ hơn 1")
+        .required("Đây là trường bắt buộc"),
 });
 
 export default function ExamSetCreator() {
     const [listQuestion, setListQuestion] = useState<Question[]>([]);
+    const [loadingQuestion, setLoadingQuestion] = useState<boolean>(true);
     const [loading, setLoading] = useState<boolean>(false);
 
     const { handleSubmit, control, reset } = useForm({
@@ -56,6 +62,7 @@ export default function ExamSetCreator() {
             numExams: 2,
             numQuestions: 5,
             duration: 5,
+            questionPast: 1,
         },
     });
 
@@ -74,6 +81,7 @@ export default function ExamSetCreator() {
         } catch (e) {
             toast.error("Lấy thông tin câu hỏi thất bại");
         }
+        setLoadingQuestion(false);
     };
 
     const handleOnSubmit = async (formData: IExamSet) => {
@@ -204,37 +212,71 @@ export default function ExamSetCreator() {
                                 />
                             </div>
                         </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Controller
+                                    name="questionPast"
+                                    control={control}
+                                    render={({
+                                        field: {
+                                            onChange,
+                                            onBlur,
+                                            value,
+                                            name,
+                                            disabled,
+                                        },
+                                        fieldState: { error },
+                                    }) => (
+                                        <Input
+                                            onChange={onChange}
+                                            onBlur={onBlur}
+                                            disabled={disabled}
+                                            error={error}
+                                            value={value}
+                                            label={{
+                                                text: "Số câu hỏi đạt",
+                                                required: true,
+                                            }}
+                                            type="number"
+                                            placeholder="VD: 1"
+                                        />
+                                    )}
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Controller
+                                    name="numExams"
+                                    control={control}
+                                    render={({
+                                        field: {
+                                            onChange,
+                                            onBlur,
+                                            value,
+                                            name,
+                                            disabled,
+                                        },
+                                        fieldState: { error },
+                                    }) => (
+                                        <Input
+                                            onChange={onChange}
+                                            onBlur={onBlur}
+                                            disabled={disabled}
+                                            error={error}
+                                            value={value}
+                                            label={{
+                                                text: "Số lượng đề",
+                                                required: true,
+                                            }}
+                                            type="number"
+                                            placeholder="Nhập số lượng đề"
+                                        />
+                                    )}
+                                />
+                            </div>
+                        </div>
 
                         <div className="space-y-2">
-                            <Controller
-                                name="numExams"
-                                control={control}
-                                render={({
-                                    field: {
-                                        onChange,
-                                        onBlur,
-                                        value,
-                                        name,
-                                        disabled,
-                                    },
-                                    fieldState: { error },
-                                }) => (
-                                    <Input
-                                        onChange={onChange}
-                                        onBlur={onBlur}
-                                        disabled={disabled}
-                                        error={error}
-                                        value={value}
-                                        label={{
-                                            text: "Số lượng đề",
-                                            required: true,
-                                        }}
-                                        type="number"
-                                        placeholder="Nhập số lượng đề"
-                                    />
-                                )}
-                            />
-
                             <TextCustom
                                 className="text-xs text-gray-500"
                                 text=" Hệ thống sẽ tự động tạo đề khác
@@ -246,6 +288,7 @@ export default function ExamSetCreator() {
                             onClick={handleSubmit(handleOnSubmit)}
                             className="w-full gap-0!"
                             loading={loading}
+                            disabled={loading}
                         >
                             <Plus className="mr-2 h-4 w-4" />
                             Tạo bộ đề
@@ -269,88 +312,94 @@ export default function ExamSetCreator() {
                             Số lượng câu hỏi hiện có: {listQuestion.length} câu
                         </CardDescription>
                     </CardHeader>
-                    <ScrollArea className="flex-1 min-h-0">
-                        <CardContent>
-                            {listQuestion.map((question, index) => (
-                                <Card key={index} className="border-2">
-                                    <CardContent className="pt-4">
-                                        <div className="flex items-start justify-between gap-4 mb-3">
-                                            <div className="flex-1">
-                                                <div className="flex items-center gap-2 mb-2">
-                                                    <Badge variant="outline">
-                                                        Câu {index + 1}
-                                                    </Badge>
+                    {loadingQuestion ? (
+                        <div className="flex-1 min-h-0 flex items-center justify-center">
+                            <Spinner width={35} height={35} />
+                        </div>
+                    ) : (
+                        <ScrollArea className="flex-1 min-h-0">
+                            <CardContent>
+                                {listQuestion.map((question, index) => (
+                                    <Card key={index} className="border-2">
+                                        <CardContent className="pt-4">
+                                            <div className="flex items-start justify-between gap-4 mb-3">
+                                                <div className="flex-1">
+                                                    <div className="flex items-center gap-2 mb-2">
+                                                        <Badge variant="outline">
+                                                            Câu {index + 1}
+                                                        </Badge>
+                                                    </div>
+                                                    <h4 className="font-medium mb-3">
+                                                        {question.Question}
+                                                    </h4>
                                                 </div>
-                                                <h4 className="font-medium mb-3">
-                                                    {question.Question}
-                                                </h4>
                                             </div>
-                                        </div>
 
-                                        <div className="space-y-2">
-                                            {[
-                                                {
-                                                    label: "A",
-                                                    value: question.A,
-                                                },
-                                                {
-                                                    label: "B",
-                                                    value: question.B,
-                                                },
-                                                {
-                                                    label: "C",
-                                                    value: question.C,
-                                                },
-                                                {
-                                                    label: "D",
-                                                    value: question.D,
-                                                },
-                                            ].map((option) => (
-                                                <div
-                                                    key={option.label}
-                                                    className={`p-3 rounded-lg border-2 flex items-start gap-3 ${
-                                                        question.Answer ===
-                                                        option.label
-                                                            ? "bg-green-50 border-green-500"
-                                                            : "bg-gray-50 border-gray-200"
-                                                    }`}
-                                                >
+                                            <div className="space-y-2">
+                                                {[
+                                                    {
+                                                        label: "A",
+                                                        value: question.A,
+                                                    },
+                                                    {
+                                                        label: "B",
+                                                        value: question.B,
+                                                    },
+                                                    {
+                                                        label: "C",
+                                                        value: question.C,
+                                                    },
+                                                    {
+                                                        label: "D",
+                                                        value: question.D,
+                                                    },
+                                                ].map((option) => (
                                                     <div
-                                                        className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
+                                                        key={option.label}
+                                                        className={`p-3 rounded-lg border-2 flex items-start gap-3 ${
                                                             question.Answer ===
                                                             option.label
-                                                                ? "bg-green-500 text-white"
-                                                                : "bg-gray-300 text-gray-700"
+                                                                ? "bg-green-50 border-green-500"
+                                                                : "bg-gray-50 border-gray-200"
                                                         }`}
                                                     >
-                                                        {option.label}
+                                                        <div
+                                                            className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
+                                                                question.Answer ===
+                                                                option.label
+                                                                    ? "bg-green-500 text-white"
+                                                                    : "bg-gray-300 text-gray-700"
+                                                            }`}
+                                                        >
+                                                            {option.label}
+                                                        </div>
+                                                        <div className="flex-1">
+                                                            <p className="text-sm">
+                                                                {option.value}
+                                                            </p>
+                                                        </div>
+                                                        {question.Answer ===
+                                                            option.label && (
+                                                            <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
+                                                        )}
                                                     </div>
-                                                    <div className="flex-1">
-                                                        <p className="text-sm">
-                                                            {option.value}
-                                                        </p>
-                                                    </div>
-                                                    {question.Answer ===
-                                                        option.label && (
-                                                        <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
-                                                    )}
-                                                </div>
-                                            ))}
-                                        </div>
-
-                                        <div className="mt-3 pt-3 border-t">
-                                            <div className="flex items-center gap-2 text-sm text-gray-600">
-                                                <span>Đáp án đúng:</span>
-                                                <Badge className="bg-green-600">
-                                                    {question.Answer}
-                                                </Badge>
+                                                ))}
                                             </div>
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            ))}
-                        </CardContent>
-                    </ScrollArea>
+
+                                            <div className="mt-3 pt-3 border-t">
+                                                <div className="flex items-center gap-2 text-sm text-gray-600">
+                                                    <span>Đáp án đúng:</span>
+                                                    <Badge className="bg-green-600">
+                                                        {question.Answer}
+                                                    </Badge>
+                                                </div>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                ))}
+                            </CardContent>
+                        </ScrollArea>
+                    )}
                 </Card>
             </div>
         </div>

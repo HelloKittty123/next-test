@@ -38,7 +38,7 @@ export const decodeBase64URL = (base64url: string) => {
 
 export function formatToIsoDate(
     value: string,
-    type: "start" | "end" = "start"
+    type: "start" | "end" = "start",
 ): string | null {
     if (!value) {
         return null;
@@ -62,10 +62,13 @@ export function formatToIsoDate(
 
 export function formatDate(
     value: string,
-    format: string = "YYYY-MM-DD"
+    format: string = "YYYY-MM-DD",
 ): string | null {
     if (!value) {
         return null;
     }
+
+    console.log(moment(value).format(format));
+
     return moment(value).format(format);
 }

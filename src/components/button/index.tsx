@@ -35,6 +35,7 @@ function Button({
     disabled = false,
     variant = "primary",
     tooltip,
+    style,
     size = "base",
     ...rest
 }: ButtonProps) {
@@ -53,11 +54,14 @@ function Button({
                         "bg-[var(--background-light-theme-disable)] text-[var(--typography-light-theme-body)]",
                     variant === "basic" &&
                         "text-[var(--typography-light-theme-label)]! px-1 py-1 h-fit! ",
-                    disabled && "opacity-50"
+                    disabled && "opacity-50",
                 )}
                 {...rest}
                 disabled={disabled}
-                style={{ cursor: disabled ? "not-allowed" : "pointer" }}
+                style={{
+                    cursor: disabled ? "not-allowed" : "pointer",
+                    ...style,
+                }}
             >
                 {children}
                 {loading && (
