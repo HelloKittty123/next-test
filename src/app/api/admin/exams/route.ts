@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
             Number(numExams) <= 0 ||
             Number(numQuestions) <= 0 ||
             Number(duration) <= 0 ||
-            Number(questionPast)
+            Number(questionPast) <= 0
         ) {
             return NextResponse.json(
                 {

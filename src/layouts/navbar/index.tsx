@@ -9,104 +9,129 @@ import { TextCustom } from "@components";
 import { toast } from "react-toastify";
 
 function Navbar() {
-  const NEXT_PUBLIC_APP_TITLE = process.env.NEXT_PUBLIC_APP_TITLE;
+    const NEXT_PUBLIC_APP_TITLE = process.env.NEXT_PUBLIC_APP_TITLE;
 
-  const { account, logout } = useAuth();
-  const { setLoading } = useLoading();
-  const router = useRouter();
-  const pathName = usePathname();
+    const { account, logout } = useAuth();
+    const { setLoading } = useLoading();
+    const router = useRouter();
+    const pathName = usePathname();
 
-  const logoutAction = async () => {
-    try {
-      setLoading(true);
-      await logout();
-    } catch (e) {
-      toast("Đăng xuất thất bại, vui lòng thử lại sau!", { type: "error" });
-    }
-    setLoading(false);
-  };
+    const logoutAction = async () => {
+        try {
+            setLoading(true);
+            await logout();
+            localStorage.clear();
+            sessionStorage.clear();
+        } catch (e) {
+            toast("Đăng xuất thất bại, vui lòng thử lại sau!", {
+                type: "error",
+            });
+        }
+        setLoading(false);
+    };
 
-  return (
-    <div
-      className="h-14 w-full px-8 flex items-center justify-between"
-      style={{ background: "radial-gradient(201.12% 142.23% at 100.13% -1.02%, #d01dff 0%, #5e00aa 100%)" }}
-    >
-      <div className="flex items-center cursor-pointer gap-2" onClick={() => router.push("/")}>
-        <TextCustom text={NEXT_PUBLIC_APP_TITLE} style={{ fontSize: "18px", color: "white", fontWeight: 500 }} />
-      </div>
-      <div className="flex items-center">
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger asChild>
-            <Image
-              className="rounded-full object-cover cursor-pointer"
-              width={32}
-              height={32}
-              src="/icon/avatar-default.svg"
-              alt=""
-            />
-          </DropdownMenu.Trigger>
-          <DropdownMenu.Content
-            className="w-[276px] overflow-hidden"
-            style={{ borderRadius: "12px", boxShadow: "0 0 12px #21252b1f" }}
-            align="end"
-          >
-            <DropdownMenu.Label>
-              <div className="h-[123px] bg-[var(--primary-primary-background)]"></div>
-              <div className="relative flex flex-col items-center gap-[5px] pb-3 pt-[50px]">
-                <div className="w-[104px] h-[104px] bg-white rounded-full flex items-center justify-center absolute top-[-52px] left-2/4 -translate-x-2/4">
-                  <Image
-                    className="rounded-full object-cover cursor-pointer"
-                    width={92}
-                    height={92}
-                    src="/icon/avatar-default.svg"
-                    alt=""
-                  />
-                </div>
+    return (
+        <div
+            className="h-14 w-full px-8 flex items-center justify-between"
+            style={{
+                background:
+                    "radial-gradient(201.12% 142.23% at 100.13% -1.02%, #d01dff 0%, #5e00aa 100%)",
+            }}
+        >
+            <div
+                className="flex items-center cursor-pointer gap-2"
+                onClick={() => router.push("/")}
+            >
+                <TextCustom
+                    text={NEXT_PUBLIC_APP_TITLE}
+                    style={{
+                        fontSize: "18px",
+                        color: "white",
+                        fontWeight: 500,
+                    }}
+                />
+            </div>
+            <div className="flex items-center">
+                <DropdownMenu.Root>
+                    <DropdownMenu.Trigger asChild>
+                        <Image
+                            className="rounded-full object-cover cursor-pointer"
+                            width={32}
+                            height={32}
+                            src="/icon/avatar-default.svg"
+                            alt=""
+                        />
+                    </DropdownMenu.Trigger>
+                    <DropdownMenu.Content
+                        className="w-[276px] overflow-hidden bg-white"
+                        style={{
+                            borderRadius: "12px",
+                            boxShadow: "0 0 12px #21252b1f",
+                        }}
+                        align="end"
+                    >
+                        <DropdownMenu.Label>
+                            <div className="h-[123px] bg-[var(--primary-primary-background)]"></div>
+                            <div className="relative flex flex-col items-center gap-[5px] pb-3 pt-[50px]">
+                                <div className="w-[104px] h-[104px] bg-white rounded-full flex items-center justify-center absolute top-[-52px] left-2/4 -translate-x-2/4">
+                                    <Image
+                                        className="rounded-full object-cover cursor-pointer"
+                                        width={92}
+                                        height={92}
+                                        src="/icon/avatar-default.svg"
+                                        alt=""
+                                    />
+                                </div>
 
-                <div
-                  className="text-xl font-semibold text-center text-[var(--typography-light-theme-title)]"
-                  style={{
-                    display: "-webkit-box",
-                    WebkitBoxOrient: "vertical",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    WebkitLineClamp: 2,
-                  }}
-                >
-                  {`${account?.name} `}
-                </div>
-                <div
-                  className="text-sm font-normal text-[var(--typography-light-theme-subtitle)]"
-                  style={{
-                    display: "-webkit-box",
-                    WebkitBoxOrient: "vertical",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    WebkitLineClamp: 2,
-                  }}
-                >
-                  {account?.email}
-                </div>
-              </div>
-            </DropdownMenu.Label>
-            <DropdownMenu.Group>
-              <DropdownMenu.Item className="!border-none !outline-none">
-                <div
-                  className="px-5 py-[11px] cursor-pointer hover:bg-[var(--border-light-theme-border-2)] w-full flex items-center justify-between border-t border-t-[var(--border-light-theme-border-2)]"
-                  onClick={logoutAction}
-                >
-                  <span className="text-sm font-normal leading-7 text-[var(--typography-light-theme-body)]">
-                    Đăng xuất
-                  </span>
-                  <Image width={24} height={24} src="/button/logout.svg" alt="" />
-                </div>
-              </DropdownMenu.Item>
-            </DropdownMenu.Group>
-          </DropdownMenu.Content>
-        </DropdownMenu.Root>
-      </div>
-    </div>
-  );
+                                <div
+                                    className="text-xl font-semibold text-center text-[var(--typography-light-theme-title)]"
+                                    style={{
+                                        display: "-webkit-box",
+                                        WebkitBoxOrient: "vertical",
+                                        overflow: "hidden",
+                                        textOverflow: "ellipsis",
+                                        WebkitLineClamp: 2,
+                                    }}
+                                >
+                                    {`${account?.name} `}
+                                </div>
+                                <div
+                                    className="text-sm font-normal text-[var(--typography-light-theme-subtitle)]"
+                                    style={{
+                                        display: "-webkit-box",
+                                        WebkitBoxOrient: "vertical",
+                                        overflow: "hidden",
+                                        textOverflow: "ellipsis",
+                                        WebkitLineClamp: 2,
+                                    }}
+                                >
+                                    {account?.email}
+                                </div>
+                            </div>
+                        </DropdownMenu.Label>
+                        <DropdownMenu.Group>
+                            <DropdownMenu.Item className="!border-none !outline-none">
+                                <div
+                                    className="px-5 py-[11px] cursor-pointer hover:bg-[var(--border-light-theme-border-2)] w-full flex items-center justify-between border-t border-t-[var(--border-light-theme-border-2)]"
+                                    onClick={logoutAction}
+                                >
+                                    <span className="text-sm font-normal leading-7 text-[var(--typography-light-theme-body)]">
+                                        Đăng xuất
+                                    </span>
+                                    <Image
+                                        width={24}
+                                        height={24}
+                                        src="/button/logout.svg"
+                                        alt=""
+                                    />
+                                </div>
+                            </DropdownMenu.Item>
+                        </DropdownMenu.Group>
+                    </DropdownMenu.Content>
+                </DropdownMenu.Root>
+            </div>
+        </div>
+    );
 }
 
 export default Navbar;

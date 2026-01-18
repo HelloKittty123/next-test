@@ -206,29 +206,26 @@ function ResultExam({ result, exam }: ResultExamProps) {
                             Kết quả:{" "}
                             {result.correctCount >= exam.questionPast
                                 ? "Đạt"
-                                : "Không đạt"}{" "}
-                        </p>{" "}
+                                : "Không đạt"}
+                        </p>
                     </div>
 
                     {/* Signature Section  */}
                     <div className="mt-16 grid grid-cols-2 text-center gap-10">
                         <div>
                             <p className="font-bold uppercase mb-1">
-                                Cán bộ coi{" "}
+                                Cán bộ coi
                             </p>
                             <p className="italic text-sm">
-                                (Ký, ghi rõ họ tên){" "}
+                                (Ký, ghi rõ họ tên)
                             </p>
-                            <div className="h-24"></div>
                         </div>
                         <div>
-                            <p className="font-bold uppercase mb-1">
-                                Thí sinh{" "}
-                            </p>
+                            <p className="font-bold uppercase mb-1">Thí sinh</p>
                             <p className="italic text-sm">
-                                (Ký, ghi rõ họ tên){" "}
+                                (Ký, ghi rõ họ tên)
                             </p>
-                            <div className="h-24"></div>
+                            <p className="mt-4">{account?.name}</p>
                         </div>
                     </div>
                 </div>

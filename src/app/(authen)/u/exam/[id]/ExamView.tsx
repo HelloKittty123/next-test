@@ -120,7 +120,8 @@ function ExamView({ exam, setResult }: IExamView) {
                     <CardContent className="p-4">
                         <div className="flex flex-col gap-3">
                             <h2 className="text-xl font-semibold">
-                                {exam.title}
+                                {exam.title} (Đề{" "}
+                                {exam.examCode.split("_").pop()})
                             </h2>
                             <div className="flex justify-between items-center">
                                 <div className="flex items-center gap-4 flx-1 min-w-0">
