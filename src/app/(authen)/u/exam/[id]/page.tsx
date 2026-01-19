@@ -232,7 +232,7 @@ function Exam() {
                                             Sau khi bắt đầu làm bài, đồng hồ đếm
                                             ngược sẽ bắt đầu chạy. Bài thi sẽ tự
                                             động nộp khi hết thời gian hoặc khi
-                                            bạn nhấn nút "Nộp bài".
+                                            bạn nhấn nút &quot;Nộp bài&quot;.
                                         </Callout.Text>
                                     </Callout.Root>
                                 </div>
