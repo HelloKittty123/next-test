@@ -13,7 +13,6 @@ interface IExamItem {
 
 function ExamItem({ exam, setSelectedExam, selectedExam }: IExamItem) {
   console.log(exam);
-  
 
   return (
     <Card className="col-span-12 lg:col-span-4 max-h-full">
@@ -46,6 +45,8 @@ function ExamItem({ exam, setSelectedExam, selectedExam }: IExamItem) {
                   <h4 className="font-medium">Đề {index + 1}</h4>
                 </div>
                 <div className="flex gap-2 text-xs text-gray-600">
+                  <span>{ex.code}</span>
+                  <span>•</span>
                   <span>{exam.numQuestions} câu</span>
                   <span>•</span>
                   <span>{exam.duration} phút</span>

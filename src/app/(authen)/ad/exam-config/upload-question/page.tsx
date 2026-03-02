@@ -1,10 +1,5 @@
 "use client";
 
-import React, { useState } from "react";
-import { Upload, FileSpreadsheet, Check, X } from "lucide-react";
-import { useDropzone } from "react-dropzone";
-import * as XLSX from "xlsx";
-import { toast } from "react-toastify";
 import {
   Button,
   Card,
@@ -19,23 +14,21 @@ import {
   TableHeader,
   TableRow,
 } from "@components";
-import { uploadQuestionAPI } from "@services";
-
-interface Question {
-  question: string;
-  optionA: string;
-  optionB: string;
-  optionC: string;
-  optionD: string;
-  correctAnswer: string;
-  subject?: string;
-}
+import { useExamConfig } from "@hooks";
+import { Question } from "@types";
+import { ArrowLeft, Check, FileSpreadsheet, Upload, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useDropzone } from "react-dropzone";
+import { toast } from "react-toastify";
+import * as XLSX from "xlsx";
 
 export default function QuestionUpload() {
-  const [questions, setQuestions] = useState<Question[]>([]);
   const [isUploaded, setIsUploaded] = useState(false);
-  const [file, setFile] = useState<File | null>(null);
-  const [isSubmit, setIsSubmit] = useState(false);
+
+  const { questions, setQuestions, file, setFile } = useExamConfig();
+
+  const router = useRouter();
 
   const onDrop = (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
@@ -52,12 +45,12 @@ export default function QuestionUpload() {
         const jsonData = XLSX.utils.sheet_to_json<any>(worksheet);
 
         const parsedQuestions: Question[] = jsonData.map((row: any) => ({
-          question: row["Question"] || "",
-          optionA: row["A"] || "",
-          optionB: row["B"] || "",
-          optionC: row["C"] || "",
-          optionD: row["D"] || "",
-          correctAnswer: row["Answer"] || "",
+          Question: row["Question"] || "",
+          A: row["A"] || "",
+          B: row["B"] || "",
+          C: row["C"] || "",
+          D: row["D"] || "",
+          Answer: row["Answer"] || "",
         }));
 
         setQuestions(parsedQuestions);
@@ -80,21 +73,6 @@ export default function QuestionUpload() {
     },
     maxFiles: 1,
   });
-
-  const handleSave = async () => {
-    try {
-      setIsSubmit(true);      
-      const exam = await uploadQuestionAPI(file!);
-      toast("Đã lưu câu hỏi vào hệ thống!", { type: "success" });
-      setFile(null);
-      setQuestions([]);
-      setIsUploaded(false);
-    } catch (error) {
-      toast("Tải file dữ liệu câu hỏi thất bại", { type: "error" });
-    }
-
-    setIsSubmit(false);
-  };
 
   const handleReset = () => {
     setQuestions([]);
@@ -129,9 +107,16 @@ export default function QuestionUpload() {
 
   return (
     <div className="h-full w-full bg-gray-50 p-6 flex flex-col gap-4">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-semibold">Tải câu hỏi</h1>
-        <p className="text-gray-600 text-sm">Tải lên file Excel chứa danh sách câu hỏi</p>
+      <div className="flex items-center gap-2">
+        <Button variant="basic" tooltip="Quay lại" onClick={() => router.push("/ad/exam-config")}>
+          <ArrowLeft />
+        </Button>
+        <div className="flex flex-col gap-2">
+          <div className="text-xl font-semibold text-[var(--typography-light-theme-title)]">Tải câu hỏi</div>
+          <div className="text-base font-normal text-[var(--typography-light-theme-subtitle)]">
+            Tải lên file Excel chứa danh sách câu hỏi
+          </div>
+        </div>
       </div>
 
       {!isUploaded ? (
@@ -169,35 +154,36 @@ export default function QuestionUpload() {
             </div>
 
             <div className="flex justify-center">
-              <Button onClick={downloadTemplate} classChildrens="flex items-center text-sm">
-                <FileSpreadsheet className="mr-2 h-4 w-4" />
+              <Button size="sm" onClick={downloadTemplate} classChildrens="flex items-center text-sm">
+                <FileSpreadsheet className="h-4 w-4" />
                 Tải tài liệu mẫu
               </Button>
             </div>
           </CardContent>
         </Card>
       ) : (
-        <Card className="flex-1 min-h-0 overflow-auto" style={{ maxHeight: "calc(100% - 84px)" }}>
+        <Card className="overflow-auto" style={{ maxHeight: "calc(100% - 84px)" }}>
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle>Danh sách câu hỏi đã tải lên</CardTitle>
-                <CardDescription style={{ fontSize: "12px" }}>Tổng số: {questions.length} câu hỏi</CardDescription>
+                <CardDescription style={{ fontSize: "12px" }}>
+                  Tổng số: {questions?.length || 0} câu hỏi
+                </CardDescription>
               </div>
               <div className="flex gap-2">
-                <Button disabled={true} onClick={handleReset} classChildrens="flex items-center text-sm">
-                  <X className="mr-2 h-4 w-4" />
+                <Button size="sm" onClick={handleReset} classChildrens="flex items-center text-sm">
+                  <X className="h-4 w-4" />
                   Hủy
                 </Button>
                 <Button
-                  onClick={handleSave}
-                  disabled={isSubmit}
-                  loading={isSubmit}
+                  size="sm"
+                  onClick={() => router.push(`/ad/exam-config/add`)}
                   className="bg-green-600 hover:bg-green-700"
                   classChildrens="flex items-center text-sm"
                 >
-                  <Check className="mr-2 h-4 w-4" />
-                  Lưu vào hệ thống
+                  <Check className="h-4 w-4" />
+                  Xác nhận
                 </Button>
               </div>
             </div>
@@ -217,16 +203,16 @@ export default function QuestionUpload() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {questions.map((q, index) => (
+                  {(questions || []).map((q, index) => (
                     <TableRow key={index}>
                       <TableCell>{index + 1}</TableCell>
-                      <TableCell className="md:w-[500px] w-[250px]">{q.question}</TableCell>
-                      <TableCell className="md:w-[30px] w-[200px]">{q.optionA}</TableCell>
-                      <TableCell className="md:w-[30px] w-[200px]">{q.optionB}</TableCell>
-                      <TableCell className="md:w-[30px] w-[200px]">{q.optionC}</TableCell>
-                      <TableCell className="md:w-[30px] w-[200px]">{q.optionD}</TableCell>
+                      <TableCell className="md:w-[500px] w-[250px]">{q.Question}</TableCell>
+                      <TableCell className="md:w-[30px] w-[200px]">{q.A}</TableCell>
+                      <TableCell className="md:w-[30px] w-[200px]">{q.B}</TableCell>
+                      <TableCell className="md:w-[30px] w-[200px]">{q.C}</TableCell>
+                      <TableCell className="md:w-[30px] w-[200px]">{q.D}</TableCell>
                       <TableCell>
-                        <span className="px-2 py-1 bg-green-100 text-green-800 rounded">{q.correctAnswer}</span>
+                        <span className="px-2 py-1 bg-green-100 text-green-800 rounded">{q.Answer}</span>
                       </TableCell>
                     </TableRow>
                   ))}

@@ -1,12 +1,12 @@
+import fs from "fs";
 import { NextRequest, NextResponse } from "next/server";
 import path from "path";
-import fs from "fs";
 import * as XLSX from "xlsx";
 
-export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string; examCode: string }> }) {
   try {
     // 1. Lấy ID từ URL (Next.js 15 await params)
-    const { id } = await params;
+    const { id, examCode } = await params;
 
     // 2. Đường dẫn tới file config tổng của bạn
     const configPath = path.join(process.cwd(), "data", "exams-config.json");
@@ -29,7 +29,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
         {
           error: "Bộ đề này không tồn tại hoặc chưa được kích hoạt.",
         },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -39,38 +39,37 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       return NextResponse.json({ error: "File dữ liệu bộ đề không tồn tại." }, { status: 404 });
     }
 
-    // // 6. Đọc dữ liệu từ file Excel
-    // const fileBuffer = fs.readFileSync(excelPath);
-    // const workbook = XLSX.read(fileBuffer, { type: "buffer" });
-    // const sheetName = workbook.SheetNames[0];
-    // const data: any[] = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+    // 6. Đọc dữ liệu từ file Excel
+    const fileBuffer = fs.readFileSync(excelPath);
+    const workbook = XLSX.read(fileBuffer, { type: "buffer" });
+    const sheetName = workbook.SheetNames[0];
+    const data: any[] = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
 
-    // if (data.length === 0) {
-    //   return NextResponse.json({ error: "Nội dung bộ đề trống." }, { status: 400 });
-    // }
+    if (data.length === 0) {
+      return NextResponse.json({ error: "Nội dung bộ đề trống." }, { status: 400 });
+    }
 
-    // // 7. Lấy danh sách các mã đề con (Id) duy nhất và bốc ngẫu nhiên
-    // const uniqueExamCodes = Array.from(new Set(data.map((item) => item["Id"])));
-    // const randomCode = uniqueExamCodes[Math.floor(Math.random() * uniqueExamCodes.length)];
+    // 7. Lọc câu hỏi theo mã đề đã bốc
+    const questions = data.filter((item) => item["Code"] === examCode);
+    if (questions.length === 0) {
+      return NextResponse.json({ error: "Mã đề không tồn tại." }, { status: 400 });
+    }
 
-    // // 8. Lọc câu hỏi theo mã đề đã bốc
-    // const questions = data.filter((item) => item["Id"] === randomCode);
-
-    // 9. Trả về thông tin đầy đủ cho thí sinh (không kèm đáp án)
+    // 8. Trả về thông tin đầy đủ cho thí sinh (không kèm đáp án)
     return NextResponse.json({
       id: examConfig.id,
       title: examConfig.title,
       duration: examConfig.duration, // Lấy từ file config của bạn
       totalQuestions: examConfig.numQuestions, // Lấy từ file config của bạn
-      // examCode: randomCode,
-      // questions: questions.map((q) => ({
-      //   Question: q["Question"],
-      //   STT: q["STT"],
-      //   A: q["A"],
-      //   B: q["B"],
-      //   C: q["C"],
-      //   D: q["D"],
-      // })),
+      examCode,
+      questions: questions.map((q) => ({
+        Question: q["Question"],
+        STT: q["STT"],
+        A: q["A"],
+        B: q["B"],
+        C: q["C"],
+        D: q["D"],
+      })),
     });
   } catch (error: any) {
     console.error("Lỗi lấy đề:", error);

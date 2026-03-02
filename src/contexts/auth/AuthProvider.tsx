@@ -1,12 +1,12 @@
 "use client";
 
 import { Account } from "@models";
-import { decodeBase64URL, fetchData } from "@utils";
+import { getAccountAD, logoutAD } from "@services";
+import { decodeBase64URL } from "@utils";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { AuthContext } from "./auth-context";
-import { getAccountAD, logoutAD } from "@services";
+import { AuthContext } from "./AuthContext";
 
 interface IAuthProviderProps {
     children: React.ReactNode;
@@ -33,8 +33,10 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
                 const decode = decodeBase64URL(accesToken);
 
                 const account: Account = JSON.parse(decode);
+                console.log(account);
+                
                 if (
-                    ["email", "name", "type"].every((k) =>
+                    ["email", "name", "type", "code"].every((k) =>
                         account.hasOwnProperty(k),
                     )
                 ) {

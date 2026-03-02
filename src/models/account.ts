@@ -13,4 +13,5 @@ export type Account = {
     identity?: string;
     dob?: string;
     org?: string;
+    code?: string;
 };

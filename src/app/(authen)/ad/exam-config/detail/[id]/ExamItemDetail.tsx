@@ -26,7 +26,7 @@ function ExamItemDetail({ selectedExam, exam }: IExamItemDetailProps) {
             </CardDescription>
           </div>
           {selectedExam && (
-            <Button onClick={handleExportExam}>
+            <Button size="sm" onClick={handleExportExam}>
               <div className="flex items-center">
                 <Download className="mr-2 h-4 w-4" />
                 Xuất đề

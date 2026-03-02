@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
     const data: any[] = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
 
     // 3. Lọc ra các câu hỏi của mã đề này để đối chiếu
-    const originalExam = data.filter((item) => item["Id"] === examCode);
+    const originalExam = data.filter((item) => item["Code"] === examCode);
 
     // 4. Chấm điểm
     let correctCount = 0;

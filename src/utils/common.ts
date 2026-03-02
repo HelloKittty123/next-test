@@ -68,7 +68,5 @@ export function formatDate(
         return null;
     }
 
-    console.log(moment(value).format(format));
-
     return moment(value).format(format);
 }

@@ -31,6 +31,7 @@ export type ExamDetail = {
     examCode: string;
     questionsCount: number;
     questions: Question[];
+    code: string;
 };
 
 export type ExamTest = {

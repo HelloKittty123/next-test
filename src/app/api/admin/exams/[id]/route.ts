@@ -47,6 +47,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       if (!acc[examCode]) {
         acc[examCode] = {
           examCode: examCode,
+          code: row.Code,
           questionsCount: 0,
           questions: [],
         };
